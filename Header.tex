@@ -1,0 +1,70 @@
+
+\usepackage{listing}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usetikzlibrary{shapes}
+% \usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage[
+	a4paper,
+	left=1.5cm,
+	right=1.5cm,
+	top=1.5cm,
+	bottom=2.5cm
+]{geometry}
+
+\usepackage[autostyle]{csquotes}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{minted}
+
+% Fix line number font size, see: https://tex.stackexchange.com/a/132850
+\renewcommand{\theFancyVerbLine}{\ttfamily \small \textcolor{mintedLineNumbers}{\arabic{FancyVerbLine}}}
+% \renewcommand{\theFancyVerbLine}{\sffamily \small \arabic{FancyVerbLine}}
+% \usemintedstyle{friendly}
+\usemintedstyle{tango}
+
+\definecolor{mintedBg}{rgb}{0.95,0.95,0.95}
+\definecolor{mintedLine}{rgb}{0.77,0.77,0.77}
+\definecolor{mintedLineNumbers}{rgb}{0.50,0.50,0.50}
+\newcommand{\mintedfile}[2]{
+	\inputminted[
+		framesep=2mm,
+		frame=leftline,
+		rulecolor=mintedLine,
+		baselinestretch=1.2,
+		bgcolor=mintedBg,
+		fontsize=\footnotesize,
+		linenos,
+		obeytabs=true,
+		tabsize=4,
+		numbersep=2.5mm,
+		xleftmargin=10mm,
+		xrightmargin=5mm
+	]{#1}{#2}
+}
+
+\input{Commands.tex}
+
+\usepackage[
+	pdfauthor={\paperAuthorName{}},
+	pdftitle={\paperTitle{}},
+	pdfkeywords={\paperKeywords{}},
+]{hyperref}
+
+\title{
+	\vspace{-1.5cm}
+	\paperTitle{}
+}
+% \subtitle{\paperSubtitle{}}
+\author{
+	\paperAuthorName{}
+	% \\ \paperAuthorEmail{}
+}
+\date{\paperDate{}}
+
+\selectlanguage{ngerman}
+\graphicspath{{img/}}

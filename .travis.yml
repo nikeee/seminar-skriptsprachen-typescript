@@ -1,0 +1,28 @@
+sudo: required
+
+services:
+  - docker
+
+cache:
+  directories:
+    - docker
+
+before_install:
+  - ./.ci/load-image.sh
+
+script:
+  - docker run --rm -it -v $(pwd):/home sumdoc/texlive-2018 make all
+  - sudo chown -R $(whoami):$(whoami) build
+  - cp -R presentation/* build
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: false
+  local-dir: build
+  name: Niklas Mollenhauer
+  email: nikeee@outlook.com
+  project-name: uni-18ws-seminar-skriptsprachen
+  on:
+    branch: master

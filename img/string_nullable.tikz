@@ -1,0 +1,9 @@
+\begin{tikzpicture}
+  \draw (0,0) circle (2cm);
+  \node at ( 0.00,  2.50) {string};
+  \node at (-0.55,  1.00) {\tsin{""}};
+  \node at (-0.55,  0.00) {\tsin{"hello"}};
+  \node at ( 0.80,  0.60) {\tsin{"42"}};
+  \node at ( 0.00, -0.60) {\tsundefined{}};
+  \node at ( 0.00, -1.20) {\tsnull{}};
+\end{tikzpicture}

@@ -1,0 +1,6 @@
+\begin{tikzpicture}
+  \draw (0,0) ellipse (2cm and 1.7cm);
+  \node at ( 0.00,  2.20) {boolean};
+  \node at (-0.40,  0.50) {\tstrue{}};
+  \node at ( 0.40, -0.50) {\tsfalse{}};
+\end{tikzpicture}

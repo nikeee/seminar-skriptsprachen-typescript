@@ -1,0 +1,391 @@
+\documentclass[a4paper]{scrartcl}
+
+\newcommand{\paperTitle}[0]{Die Sprache TypeScript}
+\newcommand{\paperSubtitle}[0]{Seminar Im Fachbereich Programmiersprachen/-methodik}
+\newcommand{\paperDate}[0]{12. November 2018}
+\newcommand{\paperKeywords}[0]{TypeScript, JavaScript, Seminar, Skriptsprachen}
+\newcommand{\paperAuthorName}[0]{Niklas Mollenhauer}
+\newcommand{\paperAuthorEmail}[0]{\href{mailto:niklas@uni-kassel.de}{niklas@uni-kassel.de}}
+
+\input{Header.tex}
+
+\begin{document}
+
+\maketitle
+
+\section{Einleitung}
+Im Jahr 1995 gestalteten sich Webseiten wenig interaktiv.
+% 1. Mit welchen Zielen wurde die Sprache entwickelt?
+Mit einem Browser-Marktanteil von 80\% wollte die Firma Netscape dies ändern und eine Skriptsprache in ihren Browser integrieren.
+Die Skriptsprache sollte vom Browser des Nutzers ausgeführt werden und Zugriff auf die Elemente der Webseite haben und diese sogar verändern können.
+Es sollte bspw. möglich werden, HTML-Formulareingaben auf syntaktische Korrektheit zu prüfen, bevor sie vom Nutzer abgesendet werden.
+Auch Effekte wie das Ändern von Elementeigenschaften, wenn die Maus über das Element gleitet, sollten möglich sein.
+
+Diese Skriptsprache nannte sich \js{} (ursprünglich \enquote{Live\-Script}).
+Sie wurde von Brendan Eich entwickelt und in den Netscape Navigator integriert. % Anmerkung in Präsentation: Später Mitgründer von Mozilla
+Den Prototypen entwickelte er innerhalb von zehn Tagen.
+Ihr Name war angelehnt an die damals bereits existierende Sprache Java.
+Mit Java hat \js{} bis auf den Namen und einige Elemente der Syntax nichts zu tun.
+
+Aufgrund der Popularität von \js{} gehörte es mit der Zeit zu der Standardausstattung jedes Webbrowsers.
+Ein weiterer Grund bestand darin, dass sich keine weitere Alternative durchsetzen konnte.
+Da bestehende Webseiten bereits \js{} einsetzten, war es naheliegend, die Sprache nachträglich mit Features zu erweitern, statt eine neue Sprache zu entwickeln.
+
+Im Jahr 2018 ist \js{} mehr verbreitet denn je und aus dem WWW nicht mehr wegzudenken.
+Webseiten bestehen nicht nur aus einigen interaktiven Elementen.
+Stattdessen werden ganze Anwendungen in Form einer Webseite entwickelt (\enquote{Single Page Applications}).
+Es existieren zahlreiche Interpreter bzw. Engines der Skriptsprache, deren Entwicklung meist von Browserherstellern vorangetrieben wird.
+Am bekanntesten ist Googles \enquote{V8}, Mozillas \enquote{SpiderMonkey} und Microsofts \enquote{Chakra}.
+Um die Kompatibilität zu wahren, existiert ein \js-Standard namens ECMAScript, welcher von den \js-Engines implementiert wird.
+Dieser wird mittlerweile jährlich aktualisiert, weshalb sich die Sprache schnell weiterentwickelt.
+
+Verwendet wird \js{} auch außerhalb des Browsers:
+Das Projekt \enquote{Node.js} leiht sich die \js-Engine \enquote{V8} und verwendet sie auf der Serverseite und für Konsolenanwendungen.
+Doch nicht nur im Browser und auf der Serverseite befindet sich \js{}.
+Auch alleinstehende Smartphone- und Desktop-Anwendungen können in \js{} entwickelt werden.
+\js{} kann sogar auf Microcontrollern verwendet werden.
+Die ursprünglich in kürzester Zeit für simple Nutzerinteraktionen entworfene Sprache wird somit heutzutage in weiten Teilen der IT-Industrie verwendet.
+
+Skriptsprachen werden meist für die Entwicklung von kleineren Programmen entworfen und verwendet.
+Dies war ursprünglich auch bei \js{} der Fall.
+Heutzutage bestehen \js-Projekte nicht selten aus mehreren Dateien und werden von ganzen Teams entwickelt.
+Unter dieser Entwicklung litt die Wartbarkeit dieser Projekte.
+
+Um die Wartbarkeit zu erhöhen wurde im Jahr 2012 eine Lösung von Microsoft entwickelt.
+Diese Lösung nennt sich \ts{} und hat als Ziel, \js{} zu erweitern und gleichzeitig die Kompatibilität zu \js{} zu wahren.
+Dabei sollen einige Fehlerklassen schon erkannt werden, bevor der Code ausgeführt wird, wie es bei Sprachen wie z. B. Java der Fall ist.
+
+Da \ts{} auf \js{} aufbaut, wird im ersten Abschnitt ein kleiner Einblick in die Sprache \js{} gegeben.
+Dieser besteht aus einem Überblick über \js{}, dem Laufzeit-Typsystem, Prototypen und den Programmierparadigmen.
+Für einen tieferen Einstieg in die \js{} bietet sich das Buch \enquote{Eloquent \js{}} an \cite{eloquent-js}.
+Es wird anhand eines Beispiels gezeigt, welche Probleme sich bei der \js-Entwicklung in großen Projekten ergeben könnten.
+
+Im darauffolgenden Abschnitt wird \ts{} als Lösung dieser Problemklassen vorgestellt.
+Es wird gezeigt, wie \ts{} das Typsystem von \js{} zur Entwicklungszeit abbildet.
+Außerdem wird darauf eingegangen, wie genau die Kompatibilität zu bestehenden \js-Bibliotheken hergestellt wird.
+Das offizielle \ts-Handbuch bietet über diese Ausarbeitung hinaus einen ausführlicheren Einstieg in \ts{} \cite{ts-handbook}.
+Einen tieferen Einstieg bietet das Buch \enquote{TypeScript Deep Dive}, welches zusätzlich einen Einblick in die Interna des \ts-Compilers gibt \cite{ts-basarat}.
+
+\section{\js{}}\label{sec:js}
+\js{} ist \textit{dynamisch} und \textit{schwach} typisiert.
+Dynamisch bedeutet hier, dass Typfehler erst zur Laufzeit einen Fehler produzieren.
+Die schwache Typisierung führt dazu, dass Werte implizit in Werte anderen Typs umgewandelt werden können.
+Dies kann bspw. bei Operationen wie der Addition oder bei Vergleichen der Fall sein.
+Es existieren primitive und nicht-primitive Datentypen.
+Zu den primitiven zählen unter anderem \tsstring{}, \tsnumber, \tsboolean{}.
+In \js{} steht der \tsnumber-Datentyp immer für eine Fließkommazahl.
+Integer existieren in \js{} nach aktuellem Stand nicht.
+
+% 2. Welche grundlegenden Konzepte unterstützt die Sprache?
+% 2.2 Wofür sind diese nützlich und wie werden sie verwendet?
+Im Mittelpunkt von \js{} befinden sich Funktionen und prototypenbasierte Programmierung.
+Grund\-sätz\-lich ist \js{} geeignet für mehrere Programmierparadigmen.
+Dazu gehört vor allem funktionale und objektorientierte Programmierung.
+
+Für das Nichtvorhandensein von Werten hat \js{} -- anders als in anderen Sprachen -- zwei Varianten: \tsnull{} und \tsundefined{}.
+Sie unterscheiden sich darin, dass \tsundefined{} der Wert einer Variable ist, die zwar deklariert, ihr aber nichts zugewiesen wurde.
+\tsnull{} hingegen ist ein \enquote{definiertes Nichts}, was einer Variable zugewiesen werden kann, um zu verdeutlichen, dass etwas zugewiesen wurde, aber kein Wert existiert.
+Es ist trotzdem möglich, einer Variable explizit \tsundefined{} zuzuweisen.
+
+Eine Funktion kann immer mit einer beliebigen Anzahl an Argumenten aufgerufen werden.
+Wird eine Funktion mit weniger Parametern aufgerufen, als sie in ihrer Methodensignatur auflistet, erhalten die unbesetzten Parameter bei der Ausführung der Funktion den Wert \tsundefined{}.
+
+In \js{} existieren zwei unterschiedliche Arten von Sichtbarkeiten: \textit{Block-Scoping} und \textit{Function-Scoping}.
+Beim Block-Scoping sind Variablen immer nur in dem Programmblock sichtbar, in dem sie deklariert sind.
+Wird eine Variable bspw. innerhalb des Körpers eines \tsif-Zweigs deklariert, lässt sie sich nur innerhalb dieses Blocks verwenden.
+Dies ist auch bei den Sprachen Java, \cs{} oder C der Fall.
+Beim Function-Scoping ist eine Variable immer in der gesamten Funktion sichtbar.
+Dies ist selbst der Fall, wenn sie innerhalb eines \tsif-Zweigs deklariert wurde.
+Variablen mit einer funktionsweiten Sichtbarkeit werden mit \tsvar{} deklariert, blockbasierte Sichtbarkeit wird mit \tslet{} erreicht.
+Es ist zudem möglich, Konstanten mit blockbasierter Sichtbarkeit zu deklarieren.
+
+\subsubsection*{Prototypen}
+Prototypenbasierte Programmierung bedeutet, dass Objektinstanzen durch das Klonen von Prototypen erstellt werden.
+Jede Funktion in \js{} besitzt die Eigenschaft \incode{prototype}.
+Diese Eigenschaft wird als Vorlage für neue Objekte verwendet, sollte die Funktion, zu der diese Eigenschaft gehört, als Konstruktor verwendet werden.
+\autoref{lst:prototypes} zeigt die Funktion \incode{Vector}, welche in dem Beispiel als Konstruktor fungiert.
+Ein neues Objekt mit dem \incode{Vector}-Prototyp kann nun mittels \tsin{new Vector(13, 37)} erstellt werden.
+Das resultierende Objekt \incode{first} hat nun die Eigenschaften \incode{x} und \incode{y}, welche durch den Konstruktor gesetzt werden.
+
+\begin{listing}[htb]
+	\centering
+	\jsfile{code/prototypes.js}
+	\vspace*{-7mm}
+	\caption{Prototypen in \js{}}
+	\label{lst:prototypes}
+\end{listing}
+
+Ein Prototyp kann auch nach der Instanziierung eines Objekts verändert werden.
+Beispielsweise können dem Prototyp so zu jeder Zeit Funktionen hinzugefügt werden.
+Bereits aus diesem Prototyp erstellte Objekte erhalten diese Änderungen nachträglich, da sie auf ihren Prototypen verweisen.
+Zeile 8 zeigt wie dem Vector-Prototypen die Funktion \incode{abs} hinzugefügt wird.
+So erhalten das bereits erstellte Objekt \incode{first} sowie das später erstellte Objekt \incode{second} die Funktion \incode{abs}.
+
+Über dieses Konzept kann in \js{} objektorientiert entwickelt werden.
+Im Unterschied zu klassenbasierter Objektorientierung muss für ein Objekt bei der Instanziierung nicht festgelegt sein, welche Eigenschaften das Objekt haben wird.
+Sie können auch nachträglich dem Prototypen oder dem Objekt selbst hinzugefügt werden.
+Wird eine Funktion direkt einem Objekt hinzugefügt, wie es mit der Funktion \incode{mult} aus \autoref{lst:prototypes} der Fall ist, ist diese Funktion nur bei diesem Objekt verfügbar.
+Der Prototyp und somit auch die restlichen Instanzen des Prototyps bleiben davon unberührt.
+Prototypen können in \js{} auch über ein \tsclass-Schlüsselwort definiert werden.
+Dabei bietet das \tsclass-Schlüsselwort lediglich eine syntaktisch kompaktere Schreibweise für Prototypen, statt das Konzept der Klassen in \js{} einzuführen.
+
+Objekte können nicht nur mittels \tsnew-Schlüsselwort instanziiert werden.
+Eine weitere Möglichkeit ist \js-Object-Notation (JSON) mit und ohne Anführungsstriche für die Eigenschaften bzw. Attribute, zu sehen bei der Variable \incode{third} aus \autoref{lst:prototypes}.
+Das \incode{third} -Objekt kopiert seine Eigenschaften dabei nicht vom \incode{Vector}-Prototypen, sondern vom \incode{Object}-Prototypen.
+Diese dynamische Handhabung von Eigenschaften führt dazu, dass Objekte auch als assoziatives Array bzw. Map-Typ angesehen werden kann.
+
+Aus diesem Grund sind Arrays in \js{} keine speziellen Typen.
+Sie sind lediglich Objekte, die Zahlen als Eigenschaften haben.
+Um die Verwendung als Array zu ermöglichen, existieren zwei Möglichkeiten, um auf die Eigenschaften eines Objekts zuzugreifen.
+Beispielsweise wäre der Zugriff auf die \incode{name}-Eigenschaft des Objekts \incode{person} über \tsin{person.name} als auch über \tsin{person["name"]} möglich (vgl. \autoref{lst:refactoring-sample}).
+Die letzte Variante bietet die Möglichkeit, die zu lesende Eigenschaft erst zur Laufzeit zu bestimmen, indem statt einem statischen Stringliteral eine Variable verwendet wird.
+Die Bezeichner von Objekteigenschaften können vom Typ \tsstring{} oder \tsnumber{} sein.
+Letzteres wird bei Arrays verwendet, ist aber nicht darauf beschränkt.
+
+Aufgrund der schwachen Typisierung existieren in \js{} zwei Operatoren für Gleichheit: \incode{==} und \incode{===}.
+Die erste Variante führt implizite Typkonvertierung durch, die zweite prüft auf Wert- und Typgleichheit.
+Bspw. liefert \tsin{"" == false} den Wert \tstrue{} zurück, was andeutet, die beiden Operanden seien gleich.
+Vergleicht man die beiden Werte mit \incode{===}, ist das Ergebnis \tsfalse{}.
+Es wird generell empfohlen, die letzte Variante zu verwenden.
+Dies hat den Hintergrund, dass die Regeln der Werteumwandlung der Operanden bei einem Vergleich mit \incode{==} nicht trivial sind und deshalb für häufige Fehler sorgen.
+
+\js-Code läuft üblicherweise in einem einzigen Thread.
+Aus diesem Grund läuft die \js-Ausführung im Kontext eines Browsers im gleichen Thread wie das Zeichnen der Webseite.
+Diese Designentscheidung führt dazu, dass es in \js{} nicht vorgesehen ist, diesen Thread blockieren zu können\footnote{Es existieren Außnahmen wie bspw. die \tsin{alert()}-Funktion}.
+Ein Blockieren dieses Threads würde bedeuten, dass die Webseite nicht mehr auf Nutzereingaben reagiert oder sich nicht neu zeichnet.
+In \js{} haben sich aus diesem Grund Event- bzw. Callback-basierte Entwurfsmuster etabliert.
+Der Speicher von \js{} wird durch einen Garbage Collector verwaltet.
+Der Entwickler muss sich also nicht um das Anlegen und Freigeben von Speicher kümmern.
+
+\subsubsection*{Probleme mit \js{}}
+Da \js{} dynamisch typisiert ist, fallen typische Fehler wie Tipp-, Typ- oder Verweisfehler erst zur Laufzeit auf, wenn der Code ausgeführt wird.
+Für das einfache Umbenennen von Variablen bleibt deshalb oft nichts anderes übrig, als \enquote{Suchen-und-Ersetzen} zu verwenden.
+Das Beispiel aus \autoref{lst:refactoring-sample} zeigt eine Funktion \tsin{getName}, welche die \incode{name}-Eigenschaft des übergebenen Parameters zurückgibt.
+Aufgerufen wird die Funktion mit der Variable \incode{person} bzw. \incode{book} als Parameter.
+Hier fällt auf:
+In einer statisch typisierten Sprache hätten die Variablen vermutlich verschiedene Typen, bspw. \incode{Book} und \incode{Person}.
+Dies ist hier nicht der Fall, zwar sind beide vom Prototyp \incode{Object}, trotzdem haben sie verschiedene Eigenschaften.
+Die Funktion \tsin{getName} kann mit beiden Variablen als Parametern aufgerufen werden, ohne einen Fehler zu produzieren.
+Solche Muster kommen in der \js-Praxis durchaus vor.
+Wie \autoref{lst:refactoring-sample} zeigt, gestaltet sich schon das einfache Umbenennen einer Variable oder Eigenschaft als kein einfaches Problem.
+
+\begin{listing}
+	\centering
+	\jsfile{code/sample-0.js}
+	\vspace*{-7mm}
+	\caption{Das Umbenennen eines Identifiers ist nicht trivial}
+	\label{lst:refactoring-sample}
+\end{listing}
+
+Wird die die Eigenschaft \incode{name} der Variable \incode{person} einfach in \incode{lastName} geändert, gibt \incode{getName} in Zeile 11 \tsundefined{} zurück, da die \incode{name}-Eigenschaft nicht mehr existiert.
+Zur Laufzeit entsteht dort ein Referenzfehler, da die Eigenschaft \incode{length} auf dem Wert \tsundefined{} nicht existiert.
+Es muss also auch die Funktion \incode{getName} angepasst werden.
+Wird hier aber einfach \incode{item.lastName} zurückgegeben, entsteht in Zeile 10 ein analoger Fehler, da die \incode{book}-Variable keine \incode{lastName}-Eigenschaft besitzt.
+Die Lösung besteht darin, in der \incode{getName}-Funktion eine zusätzliche Prüfung einzuführen, die prüft, ob eine \incode{lastName}-Eigenschaft existiert und diese bevorzugt zurückgibt.
+
+Eine weitere Schwierigkeit beim Umbenennen besteht darin, dass auf Eigenschaften auch über die Array-Syntax zugegriffen werden kann.
+Der Name der Eigenschaft, auf die zugegriffen werden soll, kann somit auch zur Laufzeit ausgemacht werden.
+In solchen Fällen gestaltet es sich besonders schwierig, eine Eigenschaft umzubenennen.
+
+Wird einer Funktion ein Parameter hinzugefügt, kann es passieren, dass bei einem Refactoring der neue zusätzliche Parameter an einigen Stellen schlicht vergessen wird.
+Fehler dieser Klassen fallen -- wenn überhaupt -- erst zur Laufzeit auf. Solche Refactorings kommen bei der Entwicklung jedoch häufig vor.
+Das kleine Beispiel aus \autoref{lst:refactoring-sample} zeigt somit schon einige Probleme auf, die Sprachen wie z. B. Java mit Hilfe statischer Typisierung lösen.
+
+\js-Projekte wurden mit der Zeit immer größer, was letztendlich zu Wartbarkeitsproblemen führte.
+Da \js{} im Browser bisher noch alternativlos ist, ist es nicht möglich, ohne Weiteres eine andere Sprache zu verwenden.
+Microsoft stieß intern selbst auf solche Skalierungsprobleme, weshalb der Mitarbeiter Anders Hejlsberg -- der Entwickler von Delphi, Turbo Pascal und \cs{} -- im Jahr 2012 eine Lösung entwickelte.
+
+\section{\ts{}}\label{sec:ts}
+
+% 1. Mit welchen Zielen wurde die Sprache entwickelt?
+\ts{} hat das Ziel, das Typsystem, das \js{} zur Laufzeit hat, dem Entwickler schon einen Schritt vorher -- in der Entwicklungszeit -- bereitzustellen.
+So sollen typische Fehlerklassen wie Tippfehler, falsche Parameterzahl, Null-Verweise oder unerreichbarer Code schon vor dem Ausführen erkannt werden.
+Dabei ist \ts{} keine komplett eigene Skriptsprache, sondern eine \textit{Obermenge} von \js{}.
+Jeder syntaktisch gültige \js-Code ist somit gültiger \ts-Code.
+Dies ist vor allem bei der Migration von \js{} zu \ts{} ein entscheidender Vorteil.
+\ts{} erweitert \js{} um optionale, statische Typisierung und wird üblicherweise nicht direkt von einem Interpreter ausgeführt.
+Stattdessen gibt es einen Compiler, dessen Ausgabe normales \js{} ist, welches überall ausgeführt werden kann, wo \js{} ausgeführt werden kann.
+Der \ts-Compiler ist \textit{kein} optimierender Compiler.
+Er wird üblicherweise nur vom Entwickler verwendet und nicht an bspw. den Browser ausgeliefert, welcher nur das resultierende \js{} erhält.
+Entfernt man aus einem \ts-Code alles, was mit statischer Typisierung zu tun hat, erhält man normales \js{}\footnote{Ggf. wird Zusatzcode eingefügt, um fehlende \js-Sprachfeatures bereitzustellen, sollte der Ziel-\js-Standard diesen nicht unterstützen.}.
+Die statische Typisierung bietet Features wie Interfaces, Typ-Annotationen an Variablen, Funktionsparametern und -Rückgabewerten, generische Programmierung und Typ-Aliase.
+\ts{} eignet sich für die selben Einsatzgebiete wie übliches \js{}. % 4. Für welche Einsatzgebiete ist die Sprache geeignet?
+
+Da sich \js{} rasant entwickelt und an neuen Features gewinnt, ergibt sich eine weitere Problematik:
+Nicht jeder Benutzer verwendet den neusten Browser, die immer die neusten \js-Features unterstützen.
+Ein weiteres Ziel von \ts{} ist deshalb, neuere Sprachfeatures verwendbar zu machen, ohne, dass der Endnutzer die neuste \js-Engine hat.
+Umgesetzt wird dies dadurch, dass der \ts-Compiler eingestellt werden kann, zu welchem \js-Standard kompatibler Code ausgeben werden soll.
+
+Da die statische Typisierung optional ist, bezeichnet man \ts{} auch als \enquote{graduell getypt}.
+Wird kein Typ angegeben, wird er -- wenn möglich -- über Typinferenz hergeleitet.
+Ist dies nicht möglich, wird der \ts-spezifische Typ \tsany{} verwendet, welcher für alle primitiven und nicht-primitiven Werte steht.
+
+Da sich \ts{} darauf fokussiert, lediglich statisch typisiertes \js{} zu sein, entwickelt man mit \ts{} meist in den selben Programmierparadigmen, die bei \js{} üblich sind.
+\ts{} definiert zusätzlich zu den \js-Typen eigene Typen, die es in \js{} in der Form nicht gibt, da sie zur Laufzeit auch nicht mehr relevant sind und nur vom \ts-Typechecker verwendet werden.
+Beispielsweise gibt es den bereits genannten Typ \tsany{}.
+Andere, \ts-exklusive Typen, sind bspw. \tsin{never} und \tsin{this}.
+Diese haben den Zweck, die Semantik deutlicher ausdrücken zu können.
+Hat der Compiler geschlussfolgert, dass eine Funktion den Rückgabetyp \tsin{never} hat, so wird die Funktion zur Laufzeit nicht terminieren.
+Dies ist bspw. der Fall, wenn in der Funktion eine triviale Endlosschleife gefunden wurde.
+Gibt eine Funktion die \tsthis-Referenz zurück, besitzt die Funktion den Rückgabetyp \tsthis{}.
+So erhält der Compiler die Semantik, dass eine zurückgegebene Referenz nicht nur vom selben Typ, sondern sogar das selbe Objekt ist.
+% In \js{} kann für einen Funktionsaufruf festgelegt werden, welches Objekt die \tsthis-Referenz innerhalb einer Funktion sein soll.
+
+% 2. Welche grundlegenden Konzepte unterstützt die Sprache?
+% 2.2 Wofür sind diese nützlich und wie werden sie verwendet?
+
+\subsection{Union Types und Kontrollfluss}\label{union-types}
+In \js{} ist eine Variable nicht fest an ihren Typen gebunden.
+Es ist problemlos möglich, nach einer Zuweisung wie \incode{pages = 42} eine weitere Zuweisung mit einem anderen Typ durchzuführen, bspw. \incode{pages = "a lot"}.
+Auch eine Funktion ist nicht daran gebunden, Werte eines bestimmten Typs zu\-rück\-zu\-ge\-ben, wie die in \autoref{lst:control-flow} deklarierte Funktion zeigt.
+Um dieses Verhalten in \ts{} zu modellieren, wurden \enquote{Union Types} eingeführt.
+Union Types bieten die Möglichkeit, Typen zu \enquote{verodern}.
+So kann der Typ \tsin{number | string} verwendet werden, wenn die entsprechende Variable oder der Rückgabewert sowohl eine \tsnumber{} als auch ein \tsstring{} sein kann.
+Bevor die Variable wie eine \tsnumber{} oder wie ein \tsstring{} verwendet wird, muss explizit geprüft werden, welchen konkreten Typ die Variable hat.
+Dies ist mit dem \tstypeof-Operator aus \js{} möglich.
+Das Beispiel aus \autoref{lst:control-flow} zeigt ebenfalls, dass der Typ einer Variable immer vom aktuellen Kontext bzw. dem Kontrollfluss des Programms abhängig ist.
+Abfragen in der Form von \tsif{} oder einem \tsswitch-Block haben somit die Möglichkeit, den Typen einer Variable innerhalb des Abfragenkörpers zu konkretisieren.
+
+Die Notwendigkeit für eine Prüfung kann auch fallspezifisch mit einer sogenannten \enquote{Type Assertion} abgeschaltet werden.
+Type Assertions sind das Pendant zu Type-Casts, wie es sie bspw. in Java gibt.
+Der Unterschied ist allerdings, dass eine Type Assertion nur einen Einfluss auf den Typechecker hat.
+Der erzeugte \js-Code wird davon nicht verändert.
+Der Entwickler kann so einen Compilerfehler unterdrücken, ist aber in der eigenen Verantwortung, dass seine Annahme erfüllt wird.
+Eine Type Assertion ist in \autoref{lst:control-flow} bei der Variable \incode{baz} in Zeile 16 zu sehen.
+Hier wird angenommen, dass die Variable \incode{bar} ein \tsstring{} ist.
+Der Compiler meldet deshalb keinen Fehler, allerdings kann das Programm zur Laufzeit an der Stelle einen Typfehler melden, falls \incode{bar} zur Laufzeit eine \tsnumber{} ist.
+
+\begin{listing}[htb]
+	\centering
+	\tsfile{code/control-flow.ts}
+	\vspace*{-7mm}
+	\caption{Kontrollfluss-abhängige Typen}
+	\label{lst:control-flow}
+\end{listing}
+
+Es können alle Typen (also primitive und nicht-primitive) \enquote{verodert} werden.
+Union Types lassen sich nicht nur für Variablen verwenden, sondern an allen Stellen, bei denen ein Typ spezifiziert werden kann.
+Sie können zudem auch das Ergebnis einer Typinferenz des Compilers sein, wie bspw. der Rückgabetyp aus der Funktion in \autoref{lst:control-flow}.
+
+\subsection{Nullable und Non-Nullable Types}\label{null-safety}
+Wie in der Einführung bereits angeführt, existieren in \js{} zwei verschiedene Werte für Nichtvorhandensein: \tsnull{} und \tsundefined{}.
+Dies führt dazu, dass Null-Checks in \js{} oft nur die Hälfte der Fälle abdecken, da den Entwicklern nicht immer klar ist, ob auf \tsnull{} oder \tsundefined{} -- oder sogar beides -- geprüft werden muss.
+
+Hier bietet \ts{} Abhilfe:
+Der Compiler kann so eingestellt werden\footnote{Compiler-Flag: \incode{strictNullChecks}}, dass Variablen jeden Typs nicht die Werte \tsnull{} oder \tsundefined{} annehmen können.
+\autoref{fig:nullable} zeigt die Werte, die eine Variable vom entsprechenden Typ annehmen kann, wie es ohne diese Unterstützung ist.
+\autoref{fig:non-nullable} hingegen zeigt, dass \tsnull{} und \tsundefined{} nun nicht mehr in der jeweiligen Menge an Werten enthalten sind.
+
+\begin{figure}[htb]
+	\makebox[\textwidth][c]{
+		\begin{minipage}{.45\paperwidth}
+			\centering
+			\includegraphics[width=0.24\textwidth]{number_nullable.tikz}
+			\includegraphics[width=0.24\textwidth]{string_nullable.tikz}
+			\includegraphics[width=0.24\textwidth]{boolean_nullable.tikz}
+			% \vspace*{-7mm}
+			\caption{\incode{strictNullChecks} ausgeschaltet}
+			\label{fig:nullable}
+		\end{minipage}
+		\begin{minipage}{.45\paperwidth}%
+			\centering
+			\includegraphics[width=0.20\textwidth]{number.tikz}
+			\includegraphics[width=0.20\textwidth]{string.tikz}
+			\includegraphics[width=0.20\textwidth]{boolean.tikz}
+
+			\includegraphics[width=0.22\textwidth]{null.tikz}
+			\includegraphics[width=0.22\textwidth]{undefined.tikz}
+			% \vspace*{-7mm}
+			\caption{\incode{strictNullChecks} eingeschaltet}
+			\label{fig:non-nullable}
+		\end{minipage}
+	}%
+\end{figure}
+
+Wird mit eingeschalteter strikter Null-Prüfung versucht, \tsin{let name: string = undefined;} zu kompilieren, meldet der \ts-Compiler, dass die Zuweisung nicht zulässig ist, da der Typ \tsstring{} nicht den Wert \tsundefined{} annehmen kann.
+Die Werte \tsnull{} und \tsundefined{} haben nun jeweils ihren eigenen, gleichnamigen Typ.
+Variablen vom Typ \tsundefined{} können so nur noch ausschließlich den Wert \tsundefined{} annehmen.
+Für Funktionen, die bspw. angeben, einen \tsstring{} zurückzugeben, garantiert nun der Compiler, dass diese niemals \tsnull{} oder \tsundefined{} zurückgeben.
+
+Es kommt vor, dass ein Entwickler in einer Funktion sowohl \tsnull{} als auch einen \tsstring{} zurückgeben will.
+Hier bietet das Union-Types-Feature abhilfe:
+Der Rückgabetyp kann als \tsin{string | null} angegeben werden, denn \tsnull{} ist mit dem Strict-Null-Checks-Feature ein normaler Typ.
+So forciert der Compiler -- ähnlich wie in \autoref{lst:control-flow} -- dass vor der Verwendung der entsprechenden Variable eine entsprechende Überprüfung vorangehen muss.
+Analog funktioniert dies auch mit \tsundefined{}.
+
+Die Zuweisung müsste also in \tsin{let name: string | undefined = undefined;} geändert werden.
+Greift der Entwickler nun auf die \incode{.length}-Eigenschaft der Variable \incode{name} zu, darf kein Code-Pfad existieren, der zu dieser Stelle führt, bei der keine Prüfung auf \tsundefined{} stattgefunden hat.
+Auf dieselbe Art und Weise garantiert der Compiler, dass einer Variable etwas zugewiesen wurde, bevor sie verwendet wird.
+
+\subsection{Interfaces und strukturelle Typen}
+In \ts{} können Objektstrukturen über Interfaces beschrieben werden.
+Interfaces können hierbei nicht nur Funktionen beinhalten, sondern auch Eigenschaften bzw. Attribute.
+Der \ts-Compiler achtet dabei nur auf die Struktur der Objekte, weshalb Interfaces \textit{nicht explizit} von Prototypen oder Funktionen implementiert werden müssen.
+Dies ist anders als z. B. in der Sprache Java, bei der ein Objekt nur kompatibel mit einer Variable vom Typ eines Interfaces ist, wenn die dazugehörige Klasse das Interface explizit implementiert.
+Diese Eigenschaft von \ts{} wird auch \enquote{strukturelles Typsystem} genannt.
+
+Durch diese Gegebenheit ist es möglich, Interface-Deklarationen zu erweitern, wie \autoref{lst:structural-typing} zeigt.
+Bei diesem Konzept der \enquote{offenen Interfaces} kann dies geschehen, indem ein neues Interface mit denselben Namen angelegt wird.
+Der \ts-Compiler fügt die Interface-Deklarationen zu einer zusammen.
+Dieses Vorgehen soll wiederspiegeln, dass es in \js{} möglich ist, Prototypen nachträglich zu verändern.
+In \autoref{lst:structural-typing} wird das Interface \incode{Book}, welches ursprünglich nur die Eigenschaft \incode{title} definiert, um die Eigenschaft \incode{pages} erweitert.
+Alle Stellen, die nun das \incode{Book}-Interface referenzieren, verweisen eigentlich auf eine zusammengeführte Version beider Interfaces.
+
+\begin{listing}[htb]
+	\centering
+	\tsfile{code/interfaces.ts}
+	\vspace*{-7mm}
+	\caption{Offene Interfaces und strukturierte Typen}
+	\label{lst:structural-typing}
+\end{listing}
+
+\autoref{lst:structural-typing} zeigt auch, dass alle Typen miteinander kompatibel sind, die die gleiche Struktur aufweisen.
+Dies wird durch die gültige Zuweisung von \incode{foo} zu \incode{baz} deutlich.
+\incode{baz} wird hier explizit als \incode{Comic} deklariert, zugewiesen wird der Variable allerdings ein \incode{Book}.
+Da im resultierenden \js-Code keine Typen mehr vorhanden sind, ergibt dies auch Sinn:
+Methoden, die die Eigenschaften eines \incode{Comic}s verwenden, können gar nicht den Unterschied zu einem \incode{Book} bemerken.
+Das anfängiche \js-Beispiel aus \autoref{lst:refactoring-sample} würde hier bspw. für den Parameter \incode{item} als Typ \tsin{Book | Person} verwenden (der \incode{Person}-Typ müsste dafür noch definiert werden).
+So würde der Compiler schon zur Entwicklungszeit einen Fehler melden.
+
+\ts{} bietet noch weitere, fortgeschrittene Features für die Typisierung.
+Durch das strukturelle Typsystem ermöglichen sich Szenarien, die mit nominellen Typen -- wie sie bspw. in Java realisiert sind -- nicht abbildbar sind.
+Insgesamt ist das Typsystem von \ts{} Turing-vollständig\footnote{Der Beweis ist verfügbar auf https://github.com/Microsoft/TypeScript/issues/14833}.
+
+\subsection{Type Declaration Files}\label{dts}
+Das \js-Ökosystem ist über die Jahre gewachsen.
+Die \js-Paketverwaltung Node Package Manager (NPM), welche Bibliotheken für sowohl server- als auch clientseitiges \js{} verwaltet, beinhaltet zur Zeit über 800.000 Bibliotheken\footnote{Aktuelle Zahlen verfügbar auf npmjs.com}.
+Ein Großteil dieser Bibliotheken ist in \js{} implementiert.
+Hier ergibt sich ein Problem:
+\ts{} ist zwar eine Obermenge von \js{}, allerdings hat der \ts-Compiler keine Typinformationen für diese Bibliotheken, da diese nicht in \ts{} implementiert sind.
+Um nicht die gesamte Menge an \js-Bibliotheken neu in \ts{} implementieren zu müssen, wurden \enquote{Type Declaration Files} eingeführt.
+Die Grundidee ist ähnlich zu Header-Dateien in C (\incode{.h}).
+Für eine existierende \js-Bibliothek kann eine \ts-Declaration-File geschrieben werden, die lediglich die öffentliche Schnittstelle der Bibliothek beschreibt.
+Eine solche Deklarationsdatei beinhaltet bspw. die in der Bibliothek bereitgestellten Funktionen, Typen, Interfaces, Klassen und Konstanten.
+Die konkrete Implementierung liegt weiterhin bei der bereits bestehenden \js-Bibliothek.
+
+Auf diese Weise können Entwickler etablierte, in \js{} implementierte, Bibliotheken verwenden.
+Ein weiterer Vorteil ist, dass sich die Migration nach \ts{} einfacher gestaltet.
+Entwickelt und gewartet werden diese Deklarationen entweder von den Entwicklern der jeweiligen Bibliothek oder von der Community in einem zentralen Open-Source-Repository \cite{dt}.
+
+% 3. Welche Besonderheiten weist die Sprache im Vergleich zu anderen auf?
+
+% 5. Welche Stärken und Schwächen hat die Sprache gegenüber früher vorgestellten?
+
+\section{Zusammenfassung}
+\js{} wird in der heutigen Zeit für Aufgaben verwendet, für die es anfangs nicht ausgelegt war.
+Dies zieht Skalierungsprobleme mit sich, was in großen Projekten zu schlecht wartbarer Software führt.
+\ts{} ist eine Obermenge von \js{}, welche zusätzlich optionale, statische Typisierung beinhaltet.
+Das statische Typsystem von \ts{} orientiert sich an dem Typsystem, welches \js{} zur Laufzeit hat.
+Dabei wird \ts{} üblicherweise nicht direkt interpretiert, sondern zu normalem \js{} kompiliert, welches ausgeliefert wird.
+Durch die statische Typisierung werden Fehler erkannt, bevor das Programm ausgeführt wird.
+Konzepte wie das der Union Types oder der Non-Nullable-Types helfen dabei, Typ- oder Verweisfehler zur Laufzeit zu vermeiden.
+Der Typechecker des Compilers berücksichtigt bei der Überprüfung des Programms auch den Kontrollfluss, also Verzweigungen innerhalb des Programms.
+Mit Hilfe von Deklarationsdateien können bestehende \js-Bibliotheken sowie das \js-Ökosystem weiterverwendet werden.
+
+\ts{} gewinnt aufgrund der immer größer werdenden Anforderungen an Webanwendungen immer mehr an Popularität\footnote{Vergleiche \enquote{2018 Node.js User Survey Report}, verfügbar auf https://nodejs.org/en/user-survey-report/}.
+Die Sprache bietet insgesamt viele Features, die das Entwickeln von \js-basierten Anwendungen skalierbarer machen.
+
+\bibliographystyle{ieeetr}
+\bibliography{references}
+
+\end{document}

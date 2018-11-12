@@ -1,0 +1,5 @@
+\begin{tikzpicture}
+  \draw (0,0) ellipse (2cm and 1.0cm);
+  \node at ( 0.00, -1.50) {null};
+  \node at ( 0.00,  0.00) {\tsnull{}};
+\end{tikzpicture}

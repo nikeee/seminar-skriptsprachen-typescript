@@ -1,0 +1,7 @@
+\begin{tikzpicture}
+  \draw (0,0) ellipse (2cm and 1.7cm);
+  \node at ( 0.00,  2.20) {string};
+  \node at ( 0.00,  0.90) {\tsin{""}};
+  \node at ( 0.00,  0.10) {\tsin{"hello"}};
+  \node at ( 0.00, -0.85) {\tsin{"42"}};
+\end{tikzpicture}

@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+  \draw (0,0) ellipse (2cm and 1.7cm);
+  \node at ( 0.00,  2.20) {number};
+  \node at (-0.75,  0.80) {\tsin{0}};
+  \node at ( 0.50,  1.00) {\tsin{1}};
+  \node at ( 0.50, -0.15) {\tsin{-1.2}};
+  \node at (-1.00, -0.50) {\tsin{42}};
+\end{tikzpicture}

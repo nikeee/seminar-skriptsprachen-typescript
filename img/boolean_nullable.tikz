@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+  \draw (0,0) circle (2cm);
+  \node at ( 0.00,  2.50) {boolean};
+  \node at (-0.50,   0.75) {\tstrue{}};
+  \node at ( 0.50,  0.25) {\tsfalse{}};
+  \node at ( 0.00, -0.60) {\tsundefined{}};
+  \node at ( 0.00, -1.20) {\tsnull{}};
+\end{tikzpicture}
