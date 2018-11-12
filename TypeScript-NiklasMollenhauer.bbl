@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{eloquent-js}
+M.~Haverbeke, ``{Eloquent JavaScript, 3rd edition}.''
+  \url{https://eloquentjavascript.net/}, 2018.
+\newblock [Online; aufgerufen am 3. Nov. 2018].
+
+\bibitem{ts-handbook}
+{Microsoft}, ``{TypeScript Documentation}.''
+  \url{https://www.typescriptlang.org/docs/}, 2018.
+\newblock [Online; aufgerufen am 4. Nov. 2018].
+
+\bibitem{ts-basarat}
+B.~A. Syed, ``{TypeScript Deep Dive}.''
+  \url{https://basarat.gitbooks.io/typescript/}, 2018.
+\newblock [Online; aufgerufen am 5. Nov. 2018].
+
+\bibitem{dt}
+{DefinitelyTyped Community}, ``{DefinitelyTyped}.''
+  \url{https://github.com/DefinitelyTyped/DefinitelyTyped/}, 2018.
+\newblock [Online; aufgerufen am 4. Nov. 2018].
+
+\end{thebibliography}
